@@ -13,12 +13,13 @@ bot.on('spawn', () => {
 
 // Chat message listener for commands
 bot.on('chat', (username, message) => {
-  if (username === bot.username) return; // Ignore bot's own messages
-  
-  console.log(`${username}: ${message}`);
-  
-  // Command handling
-  if (message.startsWith('!')) {
+  try {
+    if (username === bot.username) return; // Ignore bot's own messages
+    
+    console.log(`${username}: ${message}`);
+    
+    // Command handling
+    if (message.startsWith('!')) {
     const command = message.slice(1).toLowerCase();
     
     switch (command) {
@@ -73,6 +74,9 @@ bot.on('chat', (username, message) => {
           }
         }
     }
+  } catch (error) {
+    console.log('Chat parsing error:', error.message);
+    // Continue running despite chat errors
   }
 });
 
@@ -132,8 +136,17 @@ bot.on('end', () => {
   console.log('Bot disconnected. Reconnecting...');
   followTarget = null;
   setTimeout(() => {
-    bot.connect();
+    try {
+      bot.connect();
+    } catch (error) {
+      console.log('Reconnection failed:', error.message);
+    }
   }, 5000); // Reconnect after 5 seconds
+});
+
+bot.on('error', (err) => {
+  console.log('Bot error:', err.message);
+  // Don't crash the entire process on bot errors
 });
 
 // Web server to keep the bot alive
