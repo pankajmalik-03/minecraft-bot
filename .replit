@@ -5,3 +5,19 @@ localPort = 3000
 
 [nix]
 packages = ["killall"]
+
+[workflows]
+runButton = "Run Bot"
+
+[[workflows.workflow]]
+name = "Run Bot"
+author = 45524868
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "killall node || true"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node index.js"

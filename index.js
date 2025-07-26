@@ -1,6 +1,8 @@
 const mineflayer = require('mineflayer');
 const express = require('express');
 const app = express();
+const { Movements, goals: { GoalNear } } = require('mineflayer-pathfinder')
+const { pathfinder, goals } = require('mineflayer-pathfinder');
 
 app.get('/', (req, res) => res.send('Bot is alive, darling 💖'));
 app.listen(3000, () => console.log('✨ Web server running on port 3000'));
@@ -13,9 +15,15 @@ function createBot() {
     auth: 'offline' // cracked mode, no Microsoft login
   });
 
+  bot.loadPlugin(pathfinder);
+
   bot.once('spawn', () => {
     console.log('🟢 Bot spawned and ready!');
-    bot.chat('Hey hey 👀 I’m online and lookin’ fine~');
+    bot.chat('Hey hey 👀 I'm online and lookin' fine~');
+
+    // Set up pathfinder movements
+    const mcData = require('minecraft-data')(bot.version);
+    const defaultMove = new Movements(bot, mcData);
 
     // Prevent AFK kick by jumping every 10 seconds
     setInterval(() => {
